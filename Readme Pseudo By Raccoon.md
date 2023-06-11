@@ -9,3 +9,7 @@
 5.  Adapt the prompt generation in generateProject to match the new context.
 6.  Update the frontend components to represent the project details instead of biographies.
 
+![img.png](img.png)
+
+# The Result:
+![img_1.png](img_1.png)

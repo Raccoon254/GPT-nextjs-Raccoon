@@ -9,13 +9,16 @@ export const config = {
 };
 
 const handler = async (req: Request): Promise<Response> => {
-  const { prompt } = (await req.json()) as {
-    prompt?: string;
+  const { topic, proficiency } = (await req.json()) as {
+    topic?: string;
+    proficiency?: string;
   };
 
-  if (!prompt) {
-    return new Response("No prompt in the request", { status: 400 });
+  if (!topic || !proficiency) {
+    return new Response("No topic or proficiency level in the request", { status: 400 });
   }
+
+  const prompt = `Generate a project idea for a ${proficiency} level student, the topic is ${topic}`;
 
   const payload: OpenAIStreamPayload = {
     model: "gpt-3.5-turbo",
@@ -32,16 +35,11 @@ const handler = async (req: Request): Promise<Response> => {
   const stream = await OpenAIStream(payload);
   // return stream response (SSE)
   return new Response(
-    stream, {
-      headers: new Headers({
-        // since we don't use browser's EventSource interface, specifying content-type is optional.
-        // the eventsource-parser library can handle the stream response as SSE, as long as the data format complies with SSE:
-        // https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#sending_events_from_the_server
-        
-        // 'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-      })
-    }
+      stream, {
+        headers: new Headers({
+          'Cache-Control': 'no-cache',
+        })
+      }
   );
 };
 
